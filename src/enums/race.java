@@ -25,9 +25,9 @@ public enum race {
             case 0:
                 return race.HUMAN;
             case 1:
-                return race.DWARF;
-            case 2:
                 return race.ELF;
+            case 2:
+                return race.DWARF;
             case 3:
                 return race.GNOME;
             case 4:

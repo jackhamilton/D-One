@@ -1,21 +1,27 @@
 package enums;
 
 public enum charClass {
-    BARBARIAN (0), 
-    BARD (1), 
-    CLERIC (2), 
-    DRUID (3), 
-    FIGHTER (10), 
-    MONK (7),
-    PALADIN (8), 
-    RANGER (4), 
-    ROGUE (9), 
-    SORCERER (5), 
-    WIZARD (6);
+    BARBARIAN (0, 1, 3, 2, 5, 4, 6), 
+    BARD (1, 6, 2, 5, 3, 4, 1), 
+    CLERIC (2, 4, 6, 2, 5, 1, 3), 
+    DRUID (3, 5, 2, 3, 4, 1, 6), 
+    FIGHTER (10, 1, 3, 2, 5, 6, 4), 
+    MONK (7, 2, 3, 4, 5, 1, 6),
+    PALADIN (8, 1, 6, 4, 5, 2, 3), 
+    RANGER (4, 2, 1, 5, 4, 3, 6), 
+    ROGUE (9, 2, 1, 4, 3, 5, 6), 
+    SORCERER (5, 6, 2, 3, 4, 5, 1), 
+    WIZARD (6, 6, 2, 3, 1, 5, 4);
     
-    public final int id;
-    charClass(int id) {
+    public final int id, strp, conp, dexp, intp, wisp, chap;
+    charClass(int id, int strp, int dexp, int conp, int intp, int wisp, int chap) {
         this.id = id;
+        this.strp = strp;
+        this.dexp = dexp;
+        this.conp = conp;
+        this.intp = intp;
+        this.wisp = wisp;
+        this.chap = chap;
     }
     
     public static charClass getClass(int id) {

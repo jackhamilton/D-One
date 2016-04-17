@@ -1,7 +1,7 @@
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import javafx.scene.paint.Color;
+import java.awt.Color;
 import javax.swing.DefaultListModel;
 
 /*
@@ -22,6 +22,7 @@ public class display extends javax.swing.JFrame {
     
     public static DefaultListModel model;
     public static DefaultListModel npcmodel;
+    public static String name = "";
     public display() {
         initComponents();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -105,6 +106,8 @@ public class display extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("D-One");
@@ -523,6 +526,25 @@ public class display extends javax.swing.JFrame {
         jTabbedPane1.addTab("Fight Tracker", jPanel3);
 
         jMenu1.setText("File");
+
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem1.setText("Save Campaign");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem2.setText("Load Campaign");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+
         jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
@@ -552,12 +574,14 @@ public class display extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         CharacterBuilder builder = new CharacterBuilder();
         builder.npc = false;
+        builder.randomize();
         builder.setVisible(true);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         CharacterBuilder builder = new CharacterBuilder();
         builder.npc = true;
+        builder.randomize();
         builder.setVisible(true);
     }//GEN-LAST:event_jButton8ActionPerformed
 
@@ -644,7 +668,7 @@ public class display extends javax.swing.JFrame {
                 builder.race.setSelectedIndex(6);
                 break;
         }
-        if (base.hair == Color.BROWN) {
+        if (base.hair == Color.gray) {
             builder.hair.setSelectedIndex(0);
         }
         if (base.hair == Color.BLACK) {
@@ -668,7 +692,7 @@ public class display extends javax.swing.JFrame {
         if (base.hair == Color.BLUE) {
             builder.hair.setSelectedIndex(7);
         }
-        if (base.hair == Color.PURPLE) {
+        if (base.hair == Color.magenta) {
             builder.hair.setSelectedIndex(8);
         }
         if (base.eyes == Color.RED) {
@@ -686,16 +710,16 @@ public class display extends javax.swing.JFrame {
         if (base.eyes == Color.BLUE) {
             builder.eyes.setSelectedIndex(4);
         }
-        if (base.eyes == Color.PURPLE) {
+        if (base.eyes == Color.magenta) {
             builder.eyes.setSelectedIndex(5);
         }
-        if (base.eyes == Color.BROWN) {
+        if (base.eyes == Color.gray) {
             builder.eyes.setSelectedIndex(6);
         }
         if (base.skin == Color.WHITE) {
             builder.skin.setSelectedIndex(0);
         }
-        if (base.skin == Color.BROWN) {
+        if (base.skin == Color.gray) {
             builder.skin.setSelectedIndex(1);
         }
         if (base.skin == Color.BLACK) {
@@ -712,14 +736,30 @@ public class display extends javax.swing.JFrame {
         builder.weight.setText(base.weight + "");
         builder.group.setText(base.group);
         builder.location.setText(base.location);
-        builder.intSpin.setValue(base.intg);
-        builder.chaSpin.setValue(base.cha);
-        builder.strSpin.setValue(base.str);
-        builder.wisSpin.setValue(base.wis);
-        builder.dexSpin.setValue(base.dex);
-        builder.conSpin.setValue(base.con);
+        builder.notes.setText(base.notes);
+        builder.langModel.removeAllElements();
+        for (String s: base.languages) {
+            builder.langModel.addElement(s);
+        }
+        builder.intSpin.setValue(base.intg - base.race.intMod);
+        builder.chaSpin.setValue(base.cha - base.race.chaMod);
+        builder.strSpin.setValue(base.str - base.race.strMod);
+        builder.wisSpin.setValue(base.wis - base.race.wisMod);
+        builder.dexSpin.setValue(base.dex - base.race.dexMod);
+        builder.conSpin.setValue(base.con - base.race.conMod);
+        builder.calcRollBonus();
         builder.setVisible(true);
     }//GEN-LAST:event_editActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        Load load = new Load();
+        load.setVisible(true);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        saveGame save = new saveGame(this);
+        save.setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     public static void reloadCharList() {
         model.removeAllElements();
@@ -772,6 +812,10 @@ public class display extends javax.swing.JFrame {
                 new display().setVisible(true);
             }
         });
+    }
+    
+    public void loadName() {
+        setTitle(name);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -828,6 +872,8 @@ public class display extends javax.swing.JFrame {
     private javax.swing.JList<String> jList5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

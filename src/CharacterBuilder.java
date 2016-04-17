@@ -2,10 +2,16 @@
 import enums.charClass;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import javafx.scene.paint.Color;
+import java.awt.Color;
+import javax.swing.DefaultListModel;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -21,13 +27,20 @@ public class CharacterBuilder extends javax.swing.JFrame {
 
     protected boolean npc = false;
     protected int id = -1;
+    
+    private int strInd = 0, dexInd = 1, conInd = 2, intInd = 3, wisInd = 4, chaInd = 5;
     /**
      * Creates new form CharacterBuilder
      */
+    
+    public static DefaultListModel langModel = new DefaultListModel();
     public CharacterBuilder() {
         initComponents();
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         this.setLocation(dim.width/2-this.getSize().width/2, dim.height/2-this.getSize().height/2);
+        langList.setModel(langModel);
+        langModel.removeAllElements();
+        langModel.addElement("Common");
     }
 
     /**
@@ -47,7 +60,6 @@ public class CharacterBuilder extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jOptionPane1 = new javax.swing.JOptionPane();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         jTabbedPane4 = new javax.swing.JTabbedPane();
@@ -79,14 +91,6 @@ public class CharacterBuilder extends javax.swing.JFrame {
         jButton13 = new javax.swing.JButton();
         skin = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        alignLNC = new javax.swing.JComboBox<>();
-        alignGNE = new javax.swing.JComboBox<>();
-        jButton14 = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        notes = new javax.swing.JTextPane();
-        jLabel31 = new javax.swing.JLabel();
-        group = new javax.swing.JTextField();
         jPanel5 = new javax.swing.JPanel();
         jLabel18 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
@@ -115,19 +119,34 @@ public class CharacterBuilder extends javax.swing.JFrame {
         chaCombo = new javax.swing.JComboBox<>();
         jLabel29 = new javax.swing.JLabel();
         conTemp = new javax.swing.JTextField();
-        strTemp = new javax.swing.JTextField();
+        raceStr = new javax.swing.JTextField();
         wisTemp = new javax.swing.JTextField();
         intTemp = new javax.swing.JTextField();
         intMod = new javax.swing.JLabel();
         jLabel19 = new javax.swing.JLabel();
         jButton15 = new javax.swing.JButton();
         dexCombo = new javax.swing.JComboBox<>();
+        strTemp1 = new javax.swing.JTextField();
+        raceDex = new javax.swing.JTextField();
+        raceCon = new javax.swing.JTextField();
+        raceInt = new javax.swing.JTextField();
+        raceWis = new javax.swing.JTextField();
+        raceCha = new javax.swing.JTextField();
+        jLabel33 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        alignLNC = new javax.swing.JComboBox<>();
+        alignGNE = new javax.swing.JComboBox<>();
+        jButton14 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        notes = new javax.swing.JTextPane();
+        jLabel31 = new javax.swing.JLabel();
+        group = new javax.swing.JTextField();
         jPanel6 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         langList = new javax.swing.JList<>();
-        addLang = new javax.swing.JButton();
         jLabel30 = new javax.swing.JLabel();
-        delLang = new javax.swing.JButton();
+        jButton16 = new javax.swing.JButton();
+        jButton17 = new javax.swing.JButton();
         jLabel32 = new javax.swing.JLabel();
         location = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
@@ -165,9 +184,7 @@ public class CharacterBuilder extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Clear");
-
-        jButton3.setText("Exit without Saving");
+        jButton3.setText("Exit");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
@@ -184,10 +201,20 @@ public class CharacterBuilder extends javax.swing.JFrame {
         jLabel1.setText("Name");
 
         jButton6.setText("Roll");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         jLabel2.setText("Class");
 
         classSelect.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Barbarian", "Bard", "Cleric", "Druid", "Ranger", "Sorcerer", "Wizard", "Monk", "Paladin", "Rogue", "Fighter" }));
+        classSelect.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                classSelectItemStateChanged(evt);
+            }
+        });
 
         jButton7.setText("Roll");
         jButton7.addActionListener(new java.awt.event.ActionListener() {
@@ -206,6 +233,11 @@ public class CharacterBuilder extends javax.swing.JFrame {
         });
 
         race.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Human", "Elf", "Dwarf", "Gnome", "Halfling", "Half-Elf", "Half-Orc" }));
+        race.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                raceItemStateChanged(evt);
+            }
+        });
         race.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 raceActionPerformed(evt);
@@ -280,6 +312,243 @@ public class CharacterBuilder extends javax.swing.JFrame {
 
         jLabel12.setText("Skin");
 
+        jLabel18.setText("Constitution");
+
+        jLabel21.setText("Prioritize");
+
+        strCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        strCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                strComboItemStateChanged(evt);
+            }
+        });
+
+        chaMod.setText("+0");
+
+        jLabel15.setText("Charisma");
+
+        wisCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        wisCombo.setSelectedIndex(4);
+        wisCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                wisComboActionPerformed(evt);
+            }
+        });
+
+        jLabel16.setText("Wisdom");
+
+        jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel28.setText("Score");
+
+        jLabel20.setText("Strength");
+
+        strMod.setText("+0");
+
+        wisMod.setText("+0");
+
+        dexMod.setText("+0");
+
+        intCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        intCombo.setSelectedIndex(3);
+        intCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                intComboActionPerformed(evt);
+            }
+        });
+
+        jLabel17.setText("Intelligence");
+
+        conMod.setText("+0");
+
+        conCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        conCombo.setSelectedIndex(2);
+        conCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                conComboActionPerformed(evt);
+            }
+        });
+
+        chaCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        chaCombo.setSelectedIndex(5);
+        chaCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chaComboActionPerformed(evt);
+            }
+        });
+
+        jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel29.setText("Temp");
+
+        raceStr.setEditable(false);
+        raceStr.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        intMod.setText("+0");
+
+        jLabel19.setText("Dexterity");
+
+        jButton15.setText("Reroll");
+        jButton15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton15ActionPerformed(evt);
+            }
+        });
+
+        dexCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
+        dexCombo.setSelectedIndex(1);
+        dexCombo.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                dexComboItemStateChanged(evt);
+            }
+        });
+
+        raceDex.setEditable(false);
+        raceDex.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        raceCon.setEditable(false);
+        raceCon.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        raceInt.setEditable(false);
+        raceInt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        raceWis.setEditable(false);
+        raceWis.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        raceCha.setEditable(false);
+        raceCha.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel33.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel33.setText("Race");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE)
+                            .addComponent(jLabel20, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(chaSpin)
+                                    .addComponent(wisSpin)
+                                    .addComponent(intSpin, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(intMod, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(chaMod, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(wisMod)))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(jLabel28, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(conSpin)
+                                    .addComponent(dexSpin)
+                                    .addComponent(strSpin, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(conMod)
+                                    .addComponent(dexMod)
+                                    .addComponent(strMod, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(raceStr)
+                            .addComponent(raceCon, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(raceWis)
+                            .addComponent(raceInt)
+                            .addComponent(raceCha)
+                            .addComponent(raceDex)
+                            .addComponent(jLabel33, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(intTemp, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel29, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(strTemp1, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(dexTemp, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(conTemp, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(wisTemp, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(chaTemp, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel21, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 45, Short.MAX_VALUE)
+                            .addComponent(strCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dexCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(conCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(intCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(wisCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(chaCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel28)
+                    .addComponent(jLabel29)
+                    .addComponent(jLabel21)
+                    .addComponent(jLabel33))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(raceStr, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(strMod)
+                    .addComponent(strCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(strSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20)
+                    .addComponent(strTemp1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(dexTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dexCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dexMod)
+                    .addComponent(dexSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel19)
+                    .addComponent(raceDex, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(conTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(conMod)
+                    .addComponent(conCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(conSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel18)
+                    .addComponent(raceCon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(intTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(intMod)
+                    .addComponent(intCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(intSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel17)
+                    .addComponent(raceInt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(wisTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(wisMod)
+                    .addComponent(wisCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(wisSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16)
+                    .addComponent(raceWis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(chaTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chaMod)
+                    .addComponent(chaCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chaSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15)
+                    .addComponent(raceCha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jButton15, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
         jLabel13.setText("Align");
 
         alignLNC.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Lawful", "Neutral", "Chaotic" }));
@@ -297,177 +566,6 @@ public class CharacterBuilder extends javax.swing.JFrame {
 
         jLabel31.setText("Group");
 
-        jLabel18.setText("Constitution");
-
-        jLabel21.setText("Prioritize");
-
-        strCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
-
-        chaMod.setText("+0");
-
-        jLabel15.setText("Charisma");
-
-        wisCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
-        wisCombo.setSelectedIndex(4);
-
-        jLabel16.setText("Wisdom");
-
-        jLabel28.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel28.setText("Score");
-
-        jLabel20.setText("Strength");
-
-        strMod.setText("+0");
-
-        wisMod.setText("+0");
-
-        dexMod.setText("+0");
-
-        intCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
-        intCombo.setSelectedIndex(3);
-
-        jLabel17.setText("Intelligence");
-
-        conMod.setText("+0");
-
-        conCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
-        conCombo.setSelectedIndex(2);
-
-        chaCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
-        chaCombo.setSelectedIndex(5);
-
-        jLabel29.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel29.setText("Temp");
-
-        intMod.setText("+0");
-
-        jLabel19.setText("Dexterity");
-
-        jButton15.setText("Reroll");
-
-        dexCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3", "4", "5", "6" }));
-        dexCombo.setSelectedIndex(1);
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel20, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(jLabel28, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(strSpin, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(strMod)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel29, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(strTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel19, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel18, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel17, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel5Layout.createSequentialGroup()
-                                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(dexSpin)
-                                            .addComponent(conSpin)
-                                            .addComponent(intSpin, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(conMod)
-                                            .addComponent(intMod)
-                                            .addComponent(wisMod)
-                                            .addComponent(chaMod)
-                                            .addComponent(dexMod)))
-                                    .addComponent(wisSpin, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(chaSpin, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(dexTemp)
-                                    .addComponent(conTemp)
-                                    .addComponent(intTemp, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(wisTemp, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(chaTemp, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jLabel21, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(intCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(conCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(wisCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(chaCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(dexCombo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(strCombo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                        .addGap(133, 133, 133)
-                        .addComponent(jButton15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel28)
-                    .addComponent(jLabel29)
-                    .addComponent(jLabel21))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(strTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(strMod)
-                    .addComponent(strCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(strSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel20))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(dexTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dexCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dexMod)
-                    .addComponent(dexSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel19))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(conTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(conMod)
-                    .addComponent(conCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(conSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel18))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(intTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(intMod)
-                    .addComponent(intCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(intSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel17))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(wisTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(wisMod)
-                    .addComponent(wisCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(wisSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel16))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(chaTemp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chaMod)
-                    .addComponent(chaCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chaSpin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel15))
-                .addGap(18, 18, 18)
-                .addComponent(jButton15, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
         langList.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { "Common" };
             public int getSize() { return strings.length; }
@@ -476,15 +574,20 @@ public class CharacterBuilder extends javax.swing.JFrame {
         langList.setToolTipText("");
         jScrollPane2.setViewportView(langList);
 
-        addLang.setText("Add");
-
         jLabel30.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel30.setText("Languages");
 
-        delLang.setText("Delete");
-        delLang.addActionListener(new java.awt.event.ActionListener() {
+        jButton16.setText("Add");
+        jButton16.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                delLangActionPerformed(evt);
+                jButton16ActionPerformed(evt);
+            }
+        });
+
+        jButton17.setText("Remove");
+        jButton17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton17ActionPerformed(evt);
             }
         });
 
@@ -497,10 +600,8 @@ public class CharacterBuilder extends javax.swing.JFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane2)
                     .addComponent(jLabel30, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(addLang, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(delLang, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jButton16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -509,11 +610,11 @@ public class CharacterBuilder extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel30)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                .addGap(8, 8, 8)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(addLang)
-                    .addComponent(delLang))
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton16)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton17)
                 .addContainerGap())
         );
 
@@ -539,7 +640,7 @@ public class CharacterBuilder extends javax.swing.JFrame {
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(34, 34, 34))
+                        .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel8)
@@ -596,9 +697,9 @@ public class CharacterBuilder extends javax.swing.JFrame {
                                     .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(jButton14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(37, 37, 37))))
+                        .addGap(24, 24, 24))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -669,9 +770,9 @@ public class CharacterBuilder extends javax.swing.JFrame {
                             .addComponent(jLabel32)
                             .addComponent(location, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(9, 9, 9)
-                        .addComponent(jScrollPane1))
-                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addComponent(jScrollPane1)
+                        .addContainerGap())
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         jTabbedPane4.addTab("Character", jPanel1);
@@ -680,11 +781,11 @@ public class CharacterBuilder extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 623, Short.MAX_VALUE)
+            .addGap(0, 635, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 458, Short.MAX_VALUE)
+            .addGap(0, 464, Short.MAX_VALUE)
         );
 
         jTabbedPane4.addTab("Inventory", jPanel2);
@@ -693,11 +794,11 @@ public class CharacterBuilder extends javax.swing.JFrame {
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 623, Short.MAX_VALUE)
+            .addGap(0, 635, Short.MAX_VALUE)
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 458, Short.MAX_VALUE)
+            .addGap(0, 464, Short.MAX_VALUE)
         );
 
         jTabbedPane4.addTab("Modifiers", jPanel3);
@@ -706,11 +807,11 @@ public class CharacterBuilder extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 623, Short.MAX_VALUE)
+            .addGap(0, 635, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 458, Short.MAX_VALUE)
+            .addGap(0, 464, Short.MAX_VALUE)
         );
 
         jTabbedPane4.addTab("Additional Information", jPanel4);
@@ -721,15 +822,13 @@ public class CharacterBuilder extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jTabbedPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(jTabbedPane4)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -738,7 +837,6 @@ public class CharacterBuilder extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
@@ -767,10 +865,6 @@ public class CharacterBuilder extends javax.swing.JFrame {
         display.reloadCharList();
         dispose();
     }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void delLangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delLangActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_delLangActionPerformed
 
     private void femaleItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_femaleItemStateChanged
         if (female.isSelected()) {
@@ -843,9 +937,421 @@ public class CharacterBuilder extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        randomize();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        name.setText(genRandName(enums.race.getRace(race.getSelectedIndex()), male.isSelected()));
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void raceItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_raceItemStateChanged
+        Character newChar = genChar();
+        switch(newChar.race) {
+            case HUMAN:
+                raceStr.setText("");
+                raceDex.setText("");
+                raceCon.setText("");
+                raceInt.setText("");
+                raceCha.setText("");
+                break;
+            case DWARF:
+                raceStr.setText("");
+                raceDex.setText("");
+                raceCon.setText("+2");
+                raceInt.setText("");
+                raceCha.setText("-2");
+                break;   
+            case ELF:
+                raceStr.setText("");
+                raceDex.setText("+2");
+                raceCon.setText("-2");
+                raceInt.setText("");
+                raceCha.setText("");
+                break;
+            case GNOME:
+                raceStr.setText("-2");
+                raceDex.setText("");
+                raceCon.setText("+2");
+                raceInt.setText("");
+                raceCha.setText("");
+                break;
+            case HALFELF:
+                raceStr.setText("");
+                raceDex.setText("");
+                raceCon.setText("");
+                raceInt.setText("");
+                raceCha.setText("");
+                break;
+            case HALFORC:
+                raceStr.setText("+2");
+                raceDex.setText("");
+                raceCon.setText("");
+                raceInt.setText("-2");
+                raceCha.setText("-2");
+                break;
+            case HALFLING:
+                raceStr.setText("-2");
+                raceDex.setText("+2");
+                raceCon.setText("");
+                raceInt.setText("");
+                raceCha.setText("");
+                break;             
+        }
+        calcRollBonus();
+    }//GEN-LAST:event_raceItemStateChanged
+
+    private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton16ActionPerformed
+        addLanguage temp = new addLanguage();
+        temp.setVisible(true);
+    }//GEN-LAST:event_jButton16ActionPerformed
+
+    private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton15ActionPerformed
+        rollStats();
+    }//GEN-LAST:event_jButton15ActionPerformed
+
+    private void strComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_strComboItemStateChanged
+        if (dexCombo.getSelectedIndex() == strCombo.getSelectedIndex()) {
+            dexCombo.setSelectedIndex(strInd);
+            dexInd = strInd;
+            strInd = strCombo.getSelectedIndex();
+            int spinVal = (int)dexSpin.getValue();
+            dexSpin.setValue(strSpin.getValue());
+            strSpin.setValue(spinVal);
+        }if (intCombo.getSelectedIndex() == strCombo.getSelectedIndex()) {
+            intCombo.setSelectedIndex(strInd);
+            intInd = strInd;
+            strInd = strCombo.getSelectedIndex();
+            int spinVal = (int)intSpin.getValue();
+            intSpin.setValue(strSpin.getValue());
+            strSpin.setValue(spinVal);
+        }if (wisCombo.getSelectedIndex() == strCombo.getSelectedIndex()) {
+            wisCombo.setSelectedIndex(strInd);
+            wisInd = strInd;
+            strInd = strCombo.getSelectedIndex();
+            int spinVal = (int)wisSpin.getValue();
+            wisSpin.setValue(strSpin.getValue());
+            strSpin.setValue(spinVal);
+        }if (conCombo.getSelectedIndex() == strCombo.getSelectedIndex()) {
+            conCombo.setSelectedIndex(strInd);
+            conInd = strInd;
+            strInd = strCombo.getSelectedIndex();
+            int spinVal = (int)conSpin.getValue();
+            conSpin.setValue(strSpin.getValue());
+            strSpin.setValue(spinVal);
+        }if (chaCombo.getSelectedIndex() == strCombo.getSelectedIndex()) {
+            chaCombo.setSelectedIndex(strInd);
+            chaInd = strInd;
+            strInd = strCombo.getSelectedIndex();
+            int spinVal = (int)chaSpin.getValue();
+            chaSpin.setValue(strSpin.getValue());
+            strSpin.setValue(spinVal);
+        }
+        calcRollBonus();
+    }//GEN-LAST:event_strComboItemStateChanged
+
+    private void dexComboItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_dexComboItemStateChanged
+        if (strCombo.getSelectedIndex() == dexCombo.getSelectedIndex()) {
+            strCombo.setSelectedIndex(dexInd);
+            strInd = dexInd;
+            dexInd = dexCombo.getSelectedIndex();
+            int spinVal = (int)dexSpin.getValue();
+            dexSpin.setValue(strSpin.getValue());
+            strSpin.setValue(spinVal);
+        }if (intCombo.getSelectedIndex() == dexCombo.getSelectedIndex()) {
+            intCombo.setSelectedIndex(dexInd);
+            intInd = dexInd;
+            dexInd = dexCombo.getSelectedIndex();
+            int spinVal = (int)dexSpin.getValue();
+            dexSpin.setValue(intSpin.getValue());
+            intSpin.setValue(spinVal);
+        }if (wisCombo.getSelectedIndex() == dexCombo.getSelectedIndex()) {
+            wisCombo.setSelectedIndex(dexInd);
+            wisInd = dexInd;
+            dexInd = dexCombo.getSelectedIndex();
+            int spinVal = (int)dexSpin.getValue();
+            dexSpin.setValue(wisSpin.getValue());
+            wisSpin.setValue(spinVal);
+        }if (conCombo.getSelectedIndex() == dexCombo.getSelectedIndex()) {
+            conCombo.setSelectedIndex(dexInd);
+            conInd = dexInd;
+            dexInd = dexCombo.getSelectedIndex();
+            int spinVal = (int)dexSpin.getValue();
+            dexSpin.setValue(conSpin.getValue());
+            conSpin.setValue(spinVal);
+        }if (chaCombo.getSelectedIndex() == dexCombo.getSelectedIndex()) {
+            chaCombo.setSelectedIndex(dexInd);
+            chaInd = dexInd;
+            dexInd = dexCombo.getSelectedIndex();
+            int spinVal = (int)dexSpin.getValue();
+            dexSpin.setValue(chaSpin.getValue());
+            chaSpin.setValue(spinVal);
+        }
+        calcRollBonus();
+    }//GEN-LAST:event_dexComboItemStateChanged
+
+    private void conComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_conComboActionPerformed
+        if (strCombo.getSelectedIndex() == conCombo.getSelectedIndex()) {
+            strCombo.setSelectedIndex(conInd);
+            strInd = conInd;
+            conInd = conCombo.getSelectedIndex();
+            int spinVal = (int)conSpin.getValue();
+            conSpin.setValue(strSpin.getValue());
+            strSpin.setValue(spinVal);
+        }if (intCombo.getSelectedIndex() == conCombo.getSelectedIndex()) {
+            intCombo.setSelectedIndex(conInd);
+            intInd = conInd;
+            conInd = conCombo.getSelectedIndex();
+            int spinVal = (int)conSpin.getValue();
+            conSpin.setValue(intSpin.getValue());
+            intSpin.setValue(spinVal);
+        }if (wisCombo.getSelectedIndex() == conCombo.getSelectedIndex()) {
+            wisCombo.setSelectedIndex(conInd);
+            wisInd = conInd;
+            conInd = conCombo.getSelectedIndex();
+            int spinVal = (int)conSpin.getValue();
+            conSpin.setValue(wisSpin.getValue());
+            wisSpin.setValue(spinVal);
+        }if (dexCombo.getSelectedIndex() == conCombo.getSelectedIndex()) {
+            dexCombo.setSelectedIndex(conInd);
+            dexInd = conInd;
+            conInd = conCombo.getSelectedIndex();
+            int spinVal = (int)conSpin.getValue();
+            conSpin.setValue(dexSpin.getValue());
+            dexSpin.setValue(spinVal);
+        }if (chaCombo.getSelectedIndex() == conCombo.getSelectedIndex()) {
+            chaCombo.setSelectedIndex(conInd);
+            chaInd = conInd;
+            conInd = conCombo.getSelectedIndex();
+            int spinVal = (int)conSpin.getValue();
+            conSpin.setValue(chaSpin.getValue());
+            chaSpin.setValue(spinVal);
+        }
+        calcRollBonus();
+    }//GEN-LAST:event_conComboActionPerformed
+
+    private void intComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_intComboActionPerformed
+        if (strCombo.getSelectedIndex() == intCombo.getSelectedIndex()) {
+            strCombo.setSelectedIndex(intInd);
+            strInd = intInd;
+            intInd = intCombo.getSelectedIndex();
+            int spinVal = (int)intSpin.getValue();
+            intSpin.setValue(strSpin.getValue());
+            strSpin.setValue(spinVal);
+        }if (dexCombo.getSelectedIndex() == intCombo.getSelectedIndex()) {
+            dexCombo.setSelectedIndex(intInd);
+            dexInd = intInd;
+            intInd = intCombo.getSelectedIndex();
+            int spinVal = (int)intSpin.getValue();
+            intSpin.setValue(dexSpin.getValue());
+            dexSpin.setValue(spinVal);
+        }if (wisCombo.getSelectedIndex() == intCombo.getSelectedIndex()) {
+            wisCombo.setSelectedIndex(intInd);
+            wisInd = intInd;
+            intInd = intCombo.getSelectedIndex();
+            int spinVal = (int)intSpin.getValue();
+            intSpin.setValue(wisSpin.getValue());
+            wisSpin.setValue(spinVal);
+        }if (conCombo.getSelectedIndex() == intCombo.getSelectedIndex()) {
+            conCombo.setSelectedIndex(intInd);
+            conInd = intInd;
+            intInd = intCombo.getSelectedIndex();
+            int spinVal = (int)intSpin.getValue();
+            intSpin.setValue(conSpin.getValue());
+            conSpin.setValue(spinVal);
+        }if (chaCombo.getSelectedIndex() == intCombo.getSelectedIndex()) {
+            chaCombo.setSelectedIndex(intInd);
+            chaInd = intInd;
+            intInd = intCombo.getSelectedIndex();
+            int spinVal = (int)intSpin.getValue();
+            intSpin.setValue(chaSpin.getValue());
+            chaSpin.setValue(spinVal);
+        }
+        calcRollBonus();
+    }//GEN-LAST:event_intComboActionPerformed
+
+    private void wisComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_wisComboActionPerformed
+        if (strCombo.getSelectedIndex() == wisCombo.getSelectedIndex()) {
+            strCombo.setSelectedIndex(wisInd);
+            strInd = wisInd;
+            wisInd = wisCombo.getSelectedIndex();
+            int spinVal = (int)wisSpin.getValue();
+            wisSpin.setValue(strSpin.getValue());
+            strSpin.setValue(spinVal);
+        }if (intCombo.getSelectedIndex() == wisCombo.getSelectedIndex()) {
+            intCombo.setSelectedIndex(wisInd);
+            intInd = wisInd;
+            wisInd = wisCombo.getSelectedIndex();
+            int spinVal = (int)wisSpin.getValue();
+            wisSpin.setValue(intSpin.getValue());
+            intSpin.setValue(spinVal);
+        }if (dexCombo.getSelectedIndex() == wisCombo.getSelectedIndex()) {
+            dexCombo.setSelectedIndex(wisInd);
+            dexInd = wisInd;
+            wisInd = wisCombo.getSelectedIndex();
+            int spinVal = (int)wisSpin.getValue();
+            wisSpin.setValue(dexSpin.getValue());
+            dexSpin.setValue(spinVal);
+        }if (conCombo.getSelectedIndex() == wisCombo.getSelectedIndex()) {
+            conCombo.setSelectedIndex(wisInd);
+            conInd = wisInd;
+            wisInd = wisCombo.getSelectedIndex();
+            int spinVal = (int)wisSpin.getValue();
+            wisSpin.setValue(conSpin.getValue());
+            conSpin.setValue(spinVal);
+        }if (chaCombo.getSelectedIndex() == wisCombo.getSelectedIndex()) {
+            chaCombo.setSelectedIndex(wisInd);
+            chaInd = wisInd;
+            wisInd = wisCombo.getSelectedIndex();
+            int spinVal = (int)wisSpin.getValue();
+            wisSpin.setValue(chaSpin.getValue());
+            chaSpin.setValue(spinVal);
+        }
+        calcRollBonus();
+    }//GEN-LAST:event_wisComboActionPerformed
+
+    private void chaComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chaComboActionPerformed
+        if (strCombo.getSelectedIndex() == chaCombo.getSelectedIndex()) {
+            strCombo.setSelectedIndex(chaInd);
+            strInd = chaInd;
+            chaInd = chaCombo.getSelectedIndex();
+            int spinVal = (int)chaSpin.getValue();
+            chaSpin.setValue(strSpin.getValue());
+            strSpin.setValue(spinVal);
+        }if (intCombo.getSelectedIndex() == chaCombo.getSelectedIndex()) {
+            intCombo.setSelectedIndex(chaInd);
+            intInd = chaInd;
+            chaInd = chaCombo.getSelectedIndex();
+            int spinVal = (int)chaSpin.getValue();
+            chaSpin.setValue(intSpin.getValue());
+            intSpin.setValue(spinVal);
+        }if (wisCombo.getSelectedIndex() == chaCombo.getSelectedIndex()) {
+            wisCombo.setSelectedIndex(chaInd);
+            wisInd = chaInd;
+            chaInd = chaCombo.getSelectedIndex();
+            int spinVal = (int)chaSpin.getValue();
+            chaSpin.setValue(wisSpin.getValue());
+            wisSpin.setValue(spinVal);
+        }if (conCombo.getSelectedIndex() == chaCombo.getSelectedIndex()) {
+            conCombo.setSelectedIndex(chaInd);
+            conInd = chaInd;
+            chaInd = chaCombo.getSelectedIndex();
+            int spinVal = (int)chaSpin.getValue();
+            chaSpin.setValue(conSpin.getValue());
+            conSpin.setValue(spinVal);
+        }if (dexCombo.getSelectedIndex() == chaCombo.getSelectedIndex()) {
+            dexCombo.setSelectedIndex(chaInd);
+            dexInd = chaInd;
+            chaInd = chaCombo.getSelectedIndex();
+            int spinVal = (int)chaSpin.getValue();
+            chaSpin.setValue(dexSpin.getValue());
+            dexSpin.setValue(spinVal);
+        }
+        calcRollBonus();
+    }//GEN-LAST:event_chaComboActionPerformed
+
+    private void classSelectItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_classSelectItemStateChanged
+        strCombo.setSelectedIndex(enums.charClass.getClass(classSelect.getSelectedIndex()).strp - 1);                                             
+        conCombo.setSelectedIndex(enums.charClass.getClass(classSelect.getSelectedIndex()).conp - 1);                                             
+        intCombo.setSelectedIndex(enums.charClass.getClass(classSelect.getSelectedIndex()).intp - 1);                                             
+        wisCombo.setSelectedIndex(enums.charClass.getClass(classSelect.getSelectedIndex()).wisp - 1);                                             
+        chaCombo.setSelectedIndex(enums.charClass.getClass(classSelect.getSelectedIndex()).chap - 1);                                             
+        dexCombo.setSelectedIndex(enums.charClass.getClass(classSelect.getSelectedIndex()).dexp - 1);
+    }//GEN-LAST:event_classSelectItemStateChanged
+
+    private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
+        if (!langModel.isEmpty() && langList.getSelectedIndex() > -1) {
+            langModel.removeElementAt(langList.getSelectedIndex());
+            if (!langModel.isEmpty()) {langList.setSelectedIndex(0);}
+        }
+    }//GEN-LAST:event_jButton17ActionPerformed
+    
+    public void rollStats() {
+        Random r = new Random();
+        List<Integer> rolls = new ArrayList();
+        while (rolls.size() < 6) {
+            List<Integer> tempRolls = new ArrayList();
+            tempRolls.add(r.nextInt(6) + 1);
+            tempRolls.add(r.nextInt(6) + 1);
+            tempRolls.add(r.nextInt(6) + 1);
+            tempRolls.add(r.nextInt(6) + 1);
+            tempRolls.sort(null);
+            rolls.add(tempRolls.get(1) + tempRolls.get(2) + tempRolls.get(3));
+        }
+        rolls.sort(null);
+        for (int x = 0; x < 6; x++) {
+            if (strCombo.getSelectedIndex() == x) {
+                strSpin.setValue(rolls.get(rolls.size()-1));
+                rolls.remove(rolls.size()-1);
+            }
+            if (conCombo.getSelectedIndex() == x) {
+                conSpin.setValue(rolls.get(rolls.size()-1));
+                rolls.remove(rolls.size()-1);
+            }
+            if (chaCombo.getSelectedIndex() == x) {
+                chaSpin.setValue(rolls.get(rolls.size()-1));
+                rolls.remove(rolls.size()-1);
+            }
+            if (intCombo.getSelectedIndex() == x) {
+                intSpin.setValue(rolls.get(rolls.size()-1));
+                rolls.remove(rolls.size()-1);
+            }
+            if (wisCombo.getSelectedIndex() == x) {
+                wisSpin.setValue(rolls.get(rolls.size()-1));
+                rolls.remove(rolls.size()-1);
+            }
+            if (dexCombo.getSelectedIndex() == x) {
+                dexSpin.setValue(rolls.get(rolls.size()-1));
+                rolls.remove(rolls.size()-1);
+            }
+        }
+        calcRollBonus();
+    }
+    
+    public void calcRollBonus() {
+        Character newChar = genChar();
+        if ((newChar.str - 10) / 2 > -1) {
+           strMod.setText("+"+(newChar.str - 10) / 2);
+        } else {
+           strMod.setText(""+(newChar.str - 10) / 2);            
+        }
+        if ((newChar.con - 10) / 2 > -1) {
+           conMod.setText("+"+(newChar.con - 10) / 2);
+        } else {
+           conMod.setText(""+(newChar.con - 10) / 2);            
+        }
+        if ((newChar.intg - 10) / 2 > -1) {
+           intMod.setText("+"+(newChar.intg - 10) / 2);
+        } else {
+           intMod.setText(""+(newChar.intg - 10) / 2);            
+        }
+        if ((newChar.cha - 10) / 2 > -1) {
+           chaMod.setText("+"+(newChar.cha - 10) / 2);
+        } else {
+           chaMod.setText(""+(newChar.cha - 10) / 2);            
+        }
+        if ((newChar.wis - 10) / 2 > -1) {
+           wisMod.setText("+"+(newChar.wis - 10) / 2);
+        } else {
+           wisMod.setText(""+(newChar.wis - 10) / 2);            
+        }
+        if ((newChar.dex - 10) / 2 > -1) {
+           dexMod.setText("+"+(newChar.dex - 10) / 2);
+        } else {
+           dexMod.setText(""+(newChar.dex - 10) / 2);            
+        }
+    }
+    
+    public void randomize() {
         Random r = new Random();
         int raceID = r.nextInt(7);
         race.setSelectedIndex(raceID);
+        if (r.nextBoolean()) {
+            female.setSelected(true);
+            male.setSelected(false);
+        } else {
+            female.setSelected(false);
+            male.setSelected(true);            
+        }
         enums.charClass cls = genRandClass(enums.race.getRace(raceID));
         classSelect.setSelectedIndex(cls.id);
         eyes.setSelectedIndex(genRandEyes(enums.race.getRace(raceID)));
@@ -862,10 +1368,12 @@ public class CharacterBuilder extends javax.swing.JFrame {
         }
         alignGNE.setSelectedIndex(gneAlign);
         alignLNC.setSelectedIndex(lncAlign);
+        name.setText(genRandName(enums.race.getRace(raceID), male.isSelected()));
         Character newChar = genChar();
         age.setText(""+genRandAge(newChar.race, newChar.charClass));
         weight.setText(""+genRandWeight(newChar.race, newChar.gender));
-    }//GEN-LAST:event_jButton1ActionPerformed
+        rollStats();
+    }
     
     public Character genChar() {
         Character newChar = new Character();
@@ -881,9 +1389,7 @@ public class CharacterBuilder extends javax.swing.JFrame {
         if (weit != null && !ages.isEmpty()) {
             newChar.weight = Integer.parseInt(weit);
         }
-        } catch (Exception e) {
-            System.out.println("Failed to grab age");
-        }
+        } catch (Exception e) {}
         newChar.group = group.getText();
         newChar.location = location.getText();
         for (int x = 0; x < langList.getModel().getSize(); x++) {
@@ -947,7 +1453,7 @@ public class CharacterBuilder extends javax.swing.JFrame {
         }
         switch(hair.getSelectedIndex()) {
             case 0:
-                newChar.hair = Color.BROWN;
+                newChar.hair = Color.gray;
                 break;
             case 1:
                 newChar.hair = Color.BLACK;
@@ -971,7 +1477,7 @@ public class CharacterBuilder extends javax.swing.JFrame {
                 newChar.hair = Color.BLUE;
                 break;
             case 8:
-                newChar.hair = Color.PURPLE;
+                newChar.hair = Color.magenta;
                 break;
         }
          switch(eyes.getSelectedIndex()) {
@@ -991,10 +1497,10 @@ public class CharacterBuilder extends javax.swing.JFrame {
                 newChar.eyes = Color.BLUE;
                 break;
             case 5:
-                newChar.eyes = Color.PURPLE;
+                newChar.eyes = Color.magenta;
                 break;
             case 6:
-                newChar.eyes = Color.BROWN;
+                newChar.eyes = Color.gray;
                 break;
         }
           switch(skin.getSelectedIndex()) {
@@ -1002,7 +1508,7 @@ public class CharacterBuilder extends javax.swing.JFrame {
                 newChar.skin = Color.WHITE;
                 break;
             case 1:
-                newChar.skin = Color.BROWN;
+                newChar.skin = Color.gray;
                 break;
             case 2:
                 newChar.skin = Color.BLACK;
@@ -1011,13 +1517,53 @@ public class CharacterBuilder extends javax.swing.JFrame {
                 newChar.skin = Color.BLUE;
                 break;
         }
-        newChar.str = (int)strSpin.getValue();
-        newChar.dex = (int)dexSpin.getValue();
-        newChar.con = (int)conSpin.getValue();
-        newChar.intg = (int)intSpin.getValue();
-        newChar.wis = (int)wisSpin.getValue();
-        newChar.cha = (int)chaSpin.getValue();  
+        newChar.str = (int)strSpin.getValue() + newChar.race.strMod;
+        newChar.dex = (int)dexSpin.getValue() + newChar.race.dexMod;
+        newChar.con = (int)conSpin.getValue() + newChar.race.conMod;
+        newChar.intg = (int)intSpin.getValue() + newChar.race.intMod;
+        newChar.wis = (int)wisSpin.getValue() + newChar.race.wisMod;
+        newChar.cha = (int)chaSpin.getValue() + newChar.race.chaMod;  
         return newChar;
+    }
+    
+    public String genRandName(enums.race r, boolean male) {
+        String s1 = "Normal male:", s2 = "Normal female:", s3 = "Normal last:";
+        if (r == enums.race.ELF) {
+            s1 = "Elf male:";
+            s2 = "Elf female:";
+            s3 = "Elf last:";
+        }
+        if (r == enums.race.DWARF) {
+            s1 = "Dwarf male:";
+            s2 = "Dwarf female:";
+            s3 = "Dwarf last:";
+        }
+        if (r == enums.race.HALFELF) {
+            s3 = "Elf last:";
+        }
+        String Search1 = s1;
+        String Search2 = s3;
+        String ret = "";
+        if (!male) {
+            Search1 = s2;
+        }
+        InputStream in = getClass().getResourceAsStream("names.txt");
+        try {
+            Reader fr = new InputStreamReader(in, "utf-8");
+            BufferedReader reader = new BufferedReader(fr);
+            while (!reader.readLine().equals(Search1)) {}
+            String found = reader.readLine();
+            List<String> items = Arrays.asList(found.split("\\s*,\\s*"));
+            Random rand = new Random();
+            ret += items.get(rand.nextInt(items.size())) + " ";
+            while (!reader.readLine().equals(Search2)) {}
+            found = reader.readLine();
+            items = Arrays.asList(found.split("\\s*,\\s*"));
+            ret += items.get(rand.nextInt(items.size()));
+        } catch (Exception e) {
+            System.out.println("Unsupported encoding.");
+        }
+        return ret;
     }
     
     public int genRandAge(enums.race r, enums.charClass c) {
@@ -1114,8 +1660,8 @@ public class CharacterBuilder extends javax.swing.JFrame {
                 max = 135;
                 break;
             case GNOME:
-                min = 40;
-                max = 35;
+                min = 35;
+                max = 40;
                 break;
             case HALFELF:
                 min = 100;
@@ -1238,7 +1784,7 @@ public class CharacterBuilder extends javax.swing.JFrame {
                 rare.add(enums.charClass.WIZARD);
                 break;
         }
-        if (rand.nextInt(10) == 0) {
+        if (rand.nextInt(10) == 0 && !rare.isEmpty()) {
             return rare.get(rand.nextInt(rare.size()));
         } else {
             enums.charClass cls = normal.get(rand.nextInt(normal.size()));
@@ -1352,7 +1898,6 @@ public class CharacterBuilder extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton addLang;
     public javax.swing.JTextField age;
     public javax.swing.JComboBox<String> alignGNE;
     public javax.swing.JComboBox<String> alignLNC;
@@ -1365,7 +1910,6 @@ public class CharacterBuilder extends javax.swing.JFrame {
     public javax.swing.JLabel conMod;
     public javax.swing.JSpinner conSpin;
     public javax.swing.JTextField conTemp;
-    private javax.swing.JButton delLang;
     private javax.swing.JComboBox<String> dexCombo;
     public javax.swing.JLabel dexMod;
     public javax.swing.JSpinner dexSpin;
@@ -1385,7 +1929,8 @@ public class CharacterBuilder extends javax.swing.JFrame {
     public javax.swing.JButton jButton13;
     public javax.swing.JButton jButton14;
     public javax.swing.JButton jButton15;
-    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton16;
+    private javax.swing.JButton jButton17;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
@@ -1413,6 +1958,7 @@ public class CharacterBuilder extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel30;
     public javax.swing.JLabel jLabel31;
     public javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
     public javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     public javax.swing.JLabel jLabel6;
@@ -1436,11 +1982,17 @@ public class CharacterBuilder extends javax.swing.JFrame {
     public javax.swing.JTextField name;
     public javax.swing.JTextPane notes;
     public javax.swing.JComboBox<String> race;
+    public javax.swing.JTextField raceCha;
+    public javax.swing.JTextField raceCon;
+    public javax.swing.JTextField raceDex;
+    public javax.swing.JTextField raceInt;
+    public javax.swing.JTextField raceStr;
+    public javax.swing.JTextField raceWis;
     public javax.swing.JComboBox<String> skin;
     private javax.swing.JComboBox<String> strCombo;
     public javax.swing.JLabel strMod;
     public javax.swing.JSpinner strSpin;
-    public javax.swing.JTextField strTemp;
+    public javax.swing.JTextField strTemp1;
     public javax.swing.JTextField weight;
     private javax.swing.JComboBox<String> wisCombo;
     public javax.swing.JLabel wisMod;
