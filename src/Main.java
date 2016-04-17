@@ -14,10 +14,13 @@ import java.util.List;
  */
 public class Main {
     
+    public static List<Character> characters = new ArrayList();
+    
     public static void main(String[] args) {
-        List<Character> characters = new ArrayList();
+        
         display display = new display();
         display.setVisible(true);
+        
     }
     
 }

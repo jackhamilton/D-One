@@ -11,6 +11,7 @@
 public class PrebuildPrompt extends javax.swing.JFrame {
     
     protected boolean npc = false;
+    protected int id = -1;
     /**
      * Creates new form PrebuildPrompt
      */
