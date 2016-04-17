@@ -2,6 +2,9 @@
 import enums.charClass;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import javafx.scene.paint.Color;
 
 /*
@@ -156,6 +159,11 @@ public class CharacterBuilder extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jButton1.setText("Roll All");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Clear");
 
@@ -179,13 +187,23 @@ public class CharacterBuilder extends javax.swing.JFrame {
 
         jLabel2.setText("Class");
 
-        classSelect.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Barbarian", "Bard", "Cleric", "Druid", "Ranger", "Sorcerer", "Wizard", "Monk", "Paladin", "Rogue" }));
+        classSelect.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Barbarian", "Bard", "Cleric", "Druid", "Ranger", "Sorcerer", "Wizard", "Monk", "Paladin", "Rogue", "Fighter" }));
 
         jButton7.setText("Roll");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("Race");
 
         jButton8.setText("Roll");
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
 
         race.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Human", "Elf", "Dwarf", "Gnome", "Halfling", "Half-Elf", "Half-Orc" }));
         race.addActionListener(new java.awt.event.ActionListener() {
@@ -197,6 +215,11 @@ public class CharacterBuilder extends javax.swing.JFrame {
         jLabel6.setText("Age");
 
         jButton9.setText("Roll");
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
 
         jLabel7.setText("Gender");
 
@@ -218,20 +241,40 @@ public class CharacterBuilder extends javax.swing.JFrame {
         jLabel8.setText("Weight");
 
         jButton10.setText("Roll");
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
 
         jLabel10.setText("Eyes");
 
         jButton11.setText("Roll");
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
 
         eyes.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Brown" }));
 
         jButton12.setText("Roll");
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
 
         hair.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Brown", "Black", "White", "Blonde", "Red", "Orange", "Yellow", "Green", "Blue", "Purple" }));
 
         jLabel11.setText("Hair");
 
         jButton13.setText("Roll");
+        jButton13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton13ActionPerformed(evt);
+            }
+        });
 
         skin.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "White", "Brown", "Black", "Other" }));
 
@@ -244,6 +287,11 @@ public class CharacterBuilder extends javax.swing.JFrame {
         alignGNE.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Good", "Neutral", "Evil" }));
 
         jButton14.setText("Roll");
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton14ActionPerformed(evt);
+            }
+        });
 
         jScrollPane1.setViewportView(notes);
 
@@ -704,6 +752,122 @@ public class CharacterBuilder extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        Character newChar = genChar();
+        if (id != -1) {
+            for (int x = 0; x < Main.characters.size(); x++) {
+                if (Main.characters.get(x).id == id) {
+                    newChar.id = id;
+                    Main.characters.remove(x);
+                    Main.characters.add(newChar);
+                }
+            }
+        } else {
+            Main.characters.add(newChar);
+        }
+        display.reloadCharList();
+        dispose();
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void delLangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delLangActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_delLangActionPerformed
+
+    private void femaleItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_femaleItemStateChanged
+        if (female.isSelected()) {
+            male.setSelected(false);
+        } else {
+            male.setSelected(true);
+        }
+    }//GEN-LAST:event_femaleItemStateChanged
+
+    private void maleItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_maleItemStateChanged
+        if (male.isSelected()) {
+            female.setSelected(false);
+        } else {
+            female.setSelected(true);
+        }
+    }//GEN-LAST:event_maleItemStateChanged
+
+    private void raceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_raceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_raceActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        Random r = new Random();
+        classSelect.setSelectedIndex(genRandClass(enums.race.getRace(race.getSelectedIndex())).id);
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        Random r = new Random();
+        race.setSelectedIndex(r.nextInt(7));
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        Random r = new Random();
+        eyes.setSelectedIndex(genRandEyes(enums.race.getRace(race.getSelectedIndex())));
+    }//GEN-LAST:event_jButton11ActionPerformed
+
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        Random r = new Random();
+        hair.setSelectedIndex(genRandHair());
+    }//GEN-LAST:event_jButton12ActionPerformed
+
+    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
+        Random r = new Random();
+        skin.setSelectedIndex(genRandSkin(enums.race.getRace(race.getSelectedIndex())));
+    }//GEN-LAST:event_jButton14ActionPerformed
+
+    private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton13ActionPerformed
+        enums.charClass cls = enums.charClass.getClass(classSelect.getSelectedIndex());
+        int gneAlign = genRandGNE(cls);
+        int lncAlign = 1;
+        if (cls == cls.DRUID) {
+            if (gneAlign == 1) {
+                lncAlign = genRandLNC(cls);
+            }
+        } else {
+            lncAlign = genRandLNC(cls);
+        }
+        alignGNE.setSelectedIndex(gneAlign);
+        alignLNC.setSelectedIndex(lncAlign);
+    }//GEN-LAST:event_jButton13ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        Character newChar = genChar();
+        age.setText(""+genRandAge(newChar.race, newChar.charClass));
+    }//GEN-LAST:event_jButton9ActionPerformed
+
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        Character newChar = genChar();
+        weight.setText(""+genRandWeight(newChar.race, newChar.gender));
+    }//GEN-LAST:event_jButton10ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Random r = new Random();
+        int raceID = r.nextInt(7);
+        race.setSelectedIndex(raceID);
+        enums.charClass cls = genRandClass(enums.race.getRace(raceID));
+        classSelect.setSelectedIndex(cls.id);
+        eyes.setSelectedIndex(genRandEyes(enums.race.getRace(raceID)));
+        hair.setSelectedIndex(genRandHair());
+        skin.setSelectedIndex(genRandSkin(enums.race.getRace(raceID)));
+        int gneAlign = genRandGNE(cls);
+        int lncAlign = 1;
+        if (cls == cls.DRUID) {
+            if (gneAlign == 1) {
+                lncAlign = genRandLNC(cls);
+            }
+        } else {
+            lncAlign = genRandLNC(cls);
+        }
+        alignGNE.setSelectedIndex(gneAlign);
+        alignLNC.setSelectedIndex(lncAlign);
+        Character newChar = genChar();
+        age.setText(""+genRandAge(newChar.race, newChar.charClass));
+        weight.setText(""+genRandWeight(newChar.race, newChar.gender));
+    }//GEN-LAST:event_jButton1ActionPerformed
+    
+    public Character genChar() {
         Character newChar = new Character();
         newChar.name = this.name.getText();
         newChar.player = !npc;
@@ -853,46 +1017,305 @@ public class CharacterBuilder extends javax.swing.JFrame {
         newChar.intg = (int)intSpin.getValue();
         newChar.wis = (int)wisSpin.getValue();
         newChar.cha = (int)chaSpin.getValue();  
-        
-        if (id != -1) {
-            for (int x = 0; x < Main.characters.size(); x++) {
-                if (Main.characters.get(x).id == id) {
-                    newChar.id = id;
-                    Main.characters.remove(x);
-                    Main.characters.add(newChar);
+        return newChar;
+    }
+    
+    public int genRandAge(enums.race r, enums.charClass c) {
+        int min = 0;
+        int max = 0;
+        int maybeOld = 0;
+        switch(r) {
+            case HUMAN:
+                min = 14;
+                max = 45;
+                maybeOld = 65;
+                if (c == enums.charClass.SORCERER || c == enums.charClass.WIZARD) {
+                    min = 17;
+                    max = 95;
                 }
-            }
-        } else {
-            Main.characters.add(newChar);
+                break;
+            case DWARF:
+                min = 16;
+                max = 150;
+                maybeOld = 350;
+                if (c == enums.charClass.SORCERER || c == enums.charClass.WIZARD) {
+                    min = 23;
+                    maybeOld = 450;
+                }
+                break;
+            case ELF:
+                min = 40;
+                max = 200;
+                maybeOld = 650;
+                if (c == enums.charClass.SORCERER || c == enums.charClass.WIZARD) {
+                    min = 55;
+                    maybeOld = 750;
+                }
+                break;
+            case GNOME:
+                min = 16;
+                max = 120;
+                maybeOld = 350;
+                if (c == enums.charClass.SORCERER || c == enums.charClass.WIZARD) {
+                    min = 20;
+                    maybeOld = 500;
+                }
+                break;
+            case HALFELF:
+                min = 14;
+                max = 80;
+                maybeOld = 150;
+                if (c == enums.charClass.SORCERER || c == enums.charClass.WIZARD) {
+                    min = 22;
+                    maybeOld = 180;
+                }
+                break;
+            case HALFORC:
+                min = 10;
+                max = 40;
+                maybeOld = 70;
+                break;
+            case HALFLING:
+                min = 15;
+                max = 80;
+                maybeOld = 120;
+                if (c == enums.charClass.SORCERER || c == enums.charClass.WIZARD) {
+                    min = 17;
+                    maybeOld = 150;
+                }
+                break;                
         }
-        display.reloadCharList();
-        dispose();
-    }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void delLangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_delLangActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_delLangActionPerformed
-
-    private void femaleItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_femaleItemStateChanged
-        if (female.isSelected()) {
-            male.setSelected(false);
+        Random rand = new Random();
+        if (rand.nextInt(10) < 3) {
+            return rand.nextInt(maybeOld - min) + min;
         } else {
-            male.setSelected(true);
+            return rand.nextInt(max - min) + min;
         }
-    }//GEN-LAST:event_femaleItemStateChanged
-
-    private void maleItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_maleItemStateChanged
-        if (male.isSelected()) {
-            female.setSelected(false);
+    }
+    
+    public int genRandWeight(enums.race r, boolean male) {
+        int min = 0;
+        int max = 0;
+        switch(r) {
+            case HUMAN:
+                min = 125;
+                max = 250;
+                if (!male) {
+                    min -= 25;
+                    max -= 50;
+                }
+                break;
+            case DWARF:
+                min = 95;
+                max = 200;
+                break;
+            case ELF:
+                min = 95;
+                max = 135;
+                break;
+            case GNOME:
+                min = 40;
+                max = 35;
+                break;
+            case HALFELF:
+                min = 100;
+                max = 180;
+                if (!male) {
+                    min -= 15;
+                    max -= 20;
+                }
+                break;
+            case HALFORC:
+                min = 180;
+                max = 250;
+                break;
+            case HALFLING:
+                min = 30;
+                max = 35;
+                break;    
+            default:
+                min = 100;
+                max = 200;
+                break;
+        }
+        Random rand = new Random();
+        return rand.nextInt(max - min) + min;
+    }
+    
+    public enums.charClass genRandClass(enums.race r) {
+        Random rand = new Random();
+        List<enums.charClass> normal = new ArrayList();
+        List<enums.charClass> rare = new ArrayList();
+        switch (r) {
+            case HUMAN:
+                normal.add(enums.charClass.BARBARIAN);
+                normal.add(enums.charClass.BARD);
+                normal.add(enums.charClass.CLERIC);
+                normal.add(enums.charClass.DRUID);
+                normal.add(enums.charClass.FIGHTER);
+                normal.add(enums.charClass.MONK);
+                normal.add(enums.charClass.PALADIN);
+                normal.add(enums.charClass.RANGER);
+                normal.add(enums.charClass.ROGUE);
+                normal.add(enums.charClass.SORCERER);
+                normal.add(enums.charClass.WIZARD);
+                break;
+            case HALFELF:
+                rare.add(enums.charClass.BARBARIAN);
+                normal.add(enums.charClass.BARD);
+                normal.add(enums.charClass.CLERIC);
+                rare.add(enums.charClass.FIGHTER);
+                normal.add(enums.charClass.MONK);
+                normal.add(enums.charClass.PALADIN);
+                normal.add(enums.charClass.RANGER);
+                normal.add(enums.charClass.ROGUE);
+                normal.add(enums.charClass.SORCERER);
+                normal.add(enums.charClass.WIZARD);
+                break;
+            case ELF:
+                rare.add(enums.charClass.BARBARIAN);
+                normal.add(enums.charClass.BARD);
+                normal.add(enums.charClass.CLERIC);
+                normal.add(enums.charClass.DRUID);
+                normal.add(enums.charClass.FIGHTER);
+                normal.add(enums.charClass.MONK);
+                rare.add(enums.charClass.PALADIN);
+                normal.add(enums.charClass.RANGER);
+                normal.add(enums.charClass.ROGUE);
+                normal.add(enums.charClass.SORCERER);
+                normal.add(enums.charClass.WIZARD);
+                break;
+            case GNOME:
+                rare.add(enums.charClass.BARBARIAN);
+                normal.add(enums.charClass.BARD);
+                normal.add(enums.charClass.CLERIC);
+                normal.add(enums.charClass.DRUID);
+                normal.add(enums.charClass.FIGHTER);
+                rare.add(enums.charClass.MONK);
+                rare.add(enums.charClass.PALADIN);
+                normal.add(enums.charClass.RANGER);
+                normal.add(enums.charClass.ROGUE);
+                normal.add(enums.charClass.SORCERER);
+                normal.add(enums.charClass.WIZARD);
+                break;
+            case HALFLING:
+                rare.add(enums.charClass.BARBARIAN);
+                rare.add(enums.charClass.BARD);
+                normal.add(enums.charClass.CLERIC);
+                rare.add(enums.charClass.DRUID);
+                normal.add(enums.charClass.FIGHTER);
+                rare.add(enums.charClass.MONK);
+                rare.add(enums.charClass.PALADIN);
+                normal.add(enums.charClass.RANGER);
+                normal.add(enums.charClass.ROGUE);
+                normal.add(enums.charClass.SORCERER);
+                rare.add(enums.charClass.WIZARD);
+                break;
+            case HALFORC:
+                normal.add(enums.charClass.BARBARIAN);
+                rare.add(enums.charClass.BARD);
+                normal.add(enums.charClass.CLERIC);
+                rare.add(enums.charClass.DRUID);
+                normal.add(enums.charClass.FIGHTER);
+                normal.add(enums.charClass.MONK);
+                rare.add(enums.charClass.PALADIN);
+                normal.add(enums.charClass.RANGER);
+                normal.add(enums.charClass.ROGUE);
+                normal.add(enums.charClass.SORCERER);
+                rare.add(enums.charClass.WIZARD);
+                break;
+            case DWARF:
+                rare.add(enums.charClass.BARBARIAN);
+                rare.add(enums.charClass.BARD);
+                normal.add(enums.charClass.CLERIC);
+                rare.add(enums.charClass.DRUID);
+                normal.add(enums.charClass.FIGHTER);
+                rare.add(enums.charClass.MONK);
+                normal.add(enums.charClass.PALADIN);
+                rare.add(enums.charClass.RANGER);
+                normal.add(enums.charClass.ROGUE);
+                normal.add(enums.charClass.SORCERER);
+                rare.add(enums.charClass.WIZARD);
+                break;
+        }
+        if (rand.nextInt(10) == 0) {
+            return rare.get(rand.nextInt(rare.size()));
         } else {
-            female.setSelected(true);
+            enums.charClass cls = normal.get(rand.nextInt(normal.size()));
+            return cls;
         }
-    }//GEN-LAST:event_maleItemStateChanged
-
-    private void raceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_raceActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_raceActionPerformed
-
+    }
+    
+    public int genRandHair() {
+        Random r = new Random();
+        if (r.nextInt(6) == 0) {
+            return r.nextInt(6) + 4;
+        } else {
+            return r.nextInt(4);
+        }
+    }
+    
+    public int genRandSkin(enums.race r) {
+        Random rand = new Random();
+        switch (r) {
+            case HUMAN:
+            case HALFLING:
+                return rand.nextInt(3);
+            case HALFORC:
+                return rand.nextInt(3)+1;
+            default:
+                return rand.nextInt(2);
+        }
+    }
+    
+    public int genRandEyes(enums.race r) {
+        Random rand = new Random();
+        switch (r) {
+            case ELF:
+            case HALFELF:
+                int ret = rand.nextInt(6)+1;
+                return ret;
+            case HALFORC:
+                return rand.nextInt(3);
+            default:
+                int ret2 = rand.nextInt(3)+3;
+                if (ret2 == 5) return 6;
+                return ret2;
+        }  
+    }
+    
+    public int genRandLNC(enums.charClass c) {
+        int align = 0;
+        Random r = new Random();
+        switch (c) {
+            case BARBARIAN:
+            case BARD:
+                align = r.nextInt(2) + 1;
+                break;
+            case MONK:
+            case PALADIN:
+                align = 0;
+                break;
+            default:
+                align = r.nextInt(3);
+                break;
+        }
+        return align;
+    }
+    
+    public int genRandGNE(enums.charClass c) {
+        int align = 0;
+        Random r = new Random();
+        switch (c) {
+            case PALADIN:
+                align = 0;
+                break;
+            default:
+                align = r.nextInt(3);
+                break;
+        }
+        return align;
+    }
     /**
      * @param args the command line arguments
      */
